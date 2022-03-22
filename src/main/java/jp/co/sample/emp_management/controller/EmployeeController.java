@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jp.co.sample.emp_management.domain.Employee;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
@@ -91,5 +92,16 @@ public class EmployeeController {
 		employee.setDependentsCount(form.getIntDependentsCount());
 		employeeService.update(employee);
 		return "redirect:/employee/showList";
+	}
+	
+	@RequestMapping("/fuzzySearch")
+	public String fuzzySearch(String name, RedirectAttributes redirectAttributes, Model model) {
+		List<Employee> employeeList = employeeService.findByLikeName(name);
+		if(employeeList.size() == 0) {
+			redirectAttributes.addFlashAttribute("noSearch", "一件もありませんでした");
+			return "redirect:/employee/showList";
+		}
+		model.addAttribute("employeeList", employeeList);
+		return "employee/list";
 	}
 }
