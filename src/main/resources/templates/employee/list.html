@@ -59,7 +59,12 @@
 		<div th:text="${noSearch}"></div>
 		</div>
 		<form th:action="@{/employee/fuzzySearch}" method="post">
-		従業員検索：<input type="text" name="name">
+		従業員検索：<input type="text" name="name" autocomplete="on" list="employees">
+		<datalist id="employees">
+			<option value="山田太郎"></option>
+			<option value="山田花子"></option>
+			<option value="鈴木一朗"></option>
+		</datalist>
 		<button>検索</button>
 		</form>
 
