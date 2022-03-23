@@ -9,6 +9,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import jp.co.sample.emp_management.domain.Employee;
 
@@ -49,12 +52,26 @@ public class EmployeeRepository {
 	 * 
 	 * @return 全従業員一覧 従業員が存在しない場合はサイズ0件の従業員一覧を返します
 	 */
-	public List<Employee> findAll() {
-		String sql = "SELECT id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count FROM employees ORDER BY hire_date";
-
-		List<Employee> developmentList = template.query(sql, EMPLOYEE_ROW_MAPPER);
-
-		return developmentList;
+	public Page<Employee> findAll(Pageable pageable) {
+		//String sql = "SELECT id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count FROM employees ORDER BY hire_date";
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count FROM employees ORDER BY hire_date ");
+		
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + pageable.getOffset() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		//何件データを取得したいのかをLIMIT句を用いて表す
+		sql.append("LIMIT " + pageable.getPageSize() / 2 + " ");
+		
+		//データの取得位置をOFFSET句の後に書く
+		sql.append("OFFSET " + pageable.getOffset() / 2);
+		
+		//データが合計何件あるのかを取得する
+		String totalSql = "SELECT COUNT(*) FROM employees";
+		int total = template.queryForObject(totalSql, new MapSqlParameterSource(), Integer.class);
+		
+		List<Employee> developmentList = template.query(sql.toString(), EMPLOYEE_ROW_MAPPER);
+		
+		//Pageクラスのコンストラクタを返す
+		return new PageImpl<Employee>(developmentList, pageable, total);
 	}
 
 	/**

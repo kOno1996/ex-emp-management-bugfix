@@ -61,9 +61,9 @@
 		<form th:action="@{/employee/fuzzySearch}" method="post">
 		従業員検索：<input type="text" name="name" autocomplete="on" list="employees">
 		<datalist id="employees">
-			<option value="山田太郎"></option>
-			<option value="山田花子"></option>
-			<option value="鈴木一朗"></option>
+			<div th:each="employee:${employeeList}">
+				<option th:value="${employee.name}"></option>
+			</div>
 		</datalist>
 		<button>検索</button>
 		</form>
@@ -107,6 +107,60 @@
 
 			</div>
 		</div>
+		<!--/* ページネーションバー（Redmine参考） */-->
+		<div class="row col-lg-offset-2 col-sm-8">
+			<nav aria-label="Page navigation2">
+				<ul class="pagination">
+					<!--/* 前のページ */-->
+					<li class="page-item" th:classappend="${page.first} ? 'hidden'">
+						<a th:href="@{''(page=${page.number - 1})}" class="page-link"
+						   th:tabindex="${page.first} ? -1" aria-label="Previous">
+							<span aria-hidden="true">&laquo;</span>
+							<span class="sr-only">Previous</span>
+						</a>
+					</li>
+
+					<!--/* 最初のページ */-->
+					<li th:if="${page.number gt 2}" class="page-item">
+						<a th:href="@{''(page=0)}" class="page-link">1</a>
+					</li>
+
+					<!--/* … */-->
+					<li th:if="${page.number gt 3}" class="page-item disabled">
+						<a href="#" class="page-link">…</a>
+					</li>
+					
+					<!-- #numbers.sequence()で指定した範囲内で繰り返し処理を行う -->
+					<th:block th:each="i : ${ #numbers.sequence(page.number - 2, page.number + 2) }">
+						<li th:if="${i ge 0 and i lt page.totalPages}" class="page-item"
+							th:classappend="${i eq page.number} ? 'active'">
+							<a th:href="@{''(page=${i})}" th:text="${i + 1}" class="page-link"></a>
+						</li>
+					</th:block>
+
+					<!--/* … */-->
+					<li th:if="${page.totalPages gt (page.number + 4)}" class="page-item disabled">
+						<a href="#" class="page-link">…</a>
+					</li>
+
+					<!--/* 最後のページ */-->
+					<li th:if="${page.totalPages gt (page.number + 3)}" class="page-item">
+						<a th:href="@{''(page=${page.totalPages - 1})}" th:text="${page.totalPages}"
+						   class="page-link"></a>
+					</li>
+
+					<!--/* 次のページ */-->
+					<li class="page-item" th:classappend="${page.last} ? 'hidden'">
+						<a th:href="@{''(page=${page.number + 1})}" class="page-link"
+						   th:tabindex="${page.last} ? -1" aria-label="Next">
+							<span aria-hidden="true">&raquo;</span>
+							<span class="sr-only">Next</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		
 	</div>
 	<!-- end container -->
 	
