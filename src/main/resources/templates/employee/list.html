@@ -58,8 +58,8 @@
 		<div th:if="${noSearch}">
 		<div th:text="${noSearch}"></div>
 		</div>
-		<form th:action="@{/employee/fuzzySearch}" method="post">
-		従業員検索：<input type="text" name="name" autocomplete="on" list="employees">
+		<form th:action="@{/employee/fuzzySearch}" method="post" th:object="${searchEmployeeForm}">
+		従業員検索：<input type="text" name="name" autocomplete="on" list="employees" th:field="*{name}">
 		<datalist id="employees">
 			<div th:each="employee:${employeeList}">
 				<option th:value="${employee.name}"></option>
@@ -134,7 +134,7 @@
 					<th:block th:each="i : ${ #numbers.sequence(page.number - 2, page.number + 2) }">
 						<li th:if="${i ge 0 and i lt page.totalPages}" class="page-item"
 							th:classappend="${i eq page.number} ? 'active'">
-							<a th:href="@{''(page=${i})}" th:text="${i + 1}" class="page-link"></a>
+							<a th:href="@{''(page=${i}),(__(${employeeList.name!=null?'name=${employeeList.name}':','})__)}" th:text="${i + 1}" class="page-link"></a>
 						</li>
 					</th:block>
 

@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import jp.co.sample.emp_management.domain.Employee;
+import jp.co.sample.emp_management.domain.EmployeeSearch;
 
 /**
  * employeesテーブルを操作するリポジトリ.
@@ -59,10 +60,10 @@ public class EmployeeRepository {
 		
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + pageable.getOffset() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		//何件データを取得したいのかをLIMIT句を用いて表す
-		sql.append("LIMIT " + pageable.getPageSize() / 2 + " ");
+		sql.append("LIMIT " + pageable.getPageSize() + " ");
 		
 		//データの取得位置をOFFSET句の後に書く
-		sql.append("OFFSET " + pageable.getOffset() / 2);
+		sql.append("OFFSET " + pageable.getOffset());
 		
 		//データが合計何件あるのかを取得する
 		String totalSql = "SELECT COUNT(*) FROM employees";
@@ -101,11 +102,21 @@ public class EmployeeRepository {
 		template.update(updateSql, param);
 	}
 	
-	public List<Employee> findByLikeName(String name){
+	public Page<Employee> findByLikeName(EmployeeSearch employeeSearch, Pageable pageable){
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM employees WHERE name LIKE :name ORDER BY hire_date");
-		SqlParameterSource param = new MapSqlParameterSource().addValue("name", '%' + name + '%');
-		return template.query(sql.toString(), param, EMPLOYEE_ROW_MAPPER);
+		sql.append("SELECT * FROM employees WHERE name LIKE :name ORDER BY hire_date ");
+		sql.append("LIMIT " + pageable.getPageSize() + " ");
+		sql.append("OFFSET " + pageable.getOffset());
+		
+		//nameに値を入れている
+		SqlParameterSource param = new MapSqlParameterSource().addValue("name", '%' + employeeSearch.getName().trim() + '%');
+		
+		String totalSql = "SELECT COUNT(*) FROM employees WHERE name LIKE :name";
+		int total = template.queryForObject(totalSql, param, Integer.class);
+		
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n" + total + "\n\n\n\n\n\n\n\n\n\n\n\n");
+		List<Employee> employeeList = template.query(sql.toString(), param, EMPLOYEE_ROW_MAPPER);
+		return new PageImpl<Employee>(employeeList, pageable, total);
 	}
 	
 	

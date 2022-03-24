@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jp.co.sample.emp_management.domain.Employee;
+import jp.co.sample.emp_management.domain.EmployeeSearch;
+import jp.co.sample.emp_management.form.SearchEmployeeForm;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
 import jp.co.sample.emp_management.service.EmployeeService;
 
@@ -40,7 +42,11 @@ public class EmployeeController {
 	public UpdateEmployeeForm setUpForm() {
 		return new UpdateEmployeeForm();
 	}
-
+	
+	@ModelAttribute
+	public SearchEmployeeForm setUpForm2() {
+		return new SearchEmployeeForm();
+	}
 	/////////////////////////////////////////////////////
 	// ユースケース：従業員一覧を表示する
 	/////////////////////////////////////////////////////
@@ -51,7 +57,7 @@ public class EmployeeController {
 	 * @return 従業員一覧画面
 	 */
 	@RequestMapping("/showList")
-	public String showList(Model model, Pageable pageable) {
+	public String showList(Model model, @PageableDefault(page = 0, size = 10) Pageable pageable) {
 		Page<Employee> employeeList = employeeService.showList(pageable);
 		model.addAttribute("page", employeeList);
 		model.addAttribute("employeeList", employeeList.getContent());
@@ -99,13 +105,17 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping("/fuzzySearch")
-	public String fuzzySearch(String name, RedirectAttributes redirectAttributes, Model model) {
-		List<Employee> employeeList = employeeService.findByLikeName(name);
-		if(employeeList.size() == 0) {
+	public String fuzzySearch(SearchEmployeeForm form, String name, RedirectAttributes redirectAttributes, Model model, @PageableDefault(page = 0, size = 10)Pageable pageable) {
+		EmployeeSearch employeeSearch = new EmployeeSearch();
+		employeeSearch.setName(form.getName());
+		Page<Employee> employeeList = employeeService.findByLikeName(employeeSearch, pageable);
+		//System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + employeeList.getContent() + "\n\n\n\n\n\n\n\n\\n\n\n\n\n");
+		if(employeeList.getContent().size() == 0) {
 			redirectAttributes.addFlashAttribute("noSearch", "一件もありませんでした");
 			return "redirect:/employee/showList";
 		}
-		model.addAttribute("employeeList", employeeList);
+		model.addAttribute("page", employeeList);
+		model.addAttribute("employeeList", employeeList.getContent());
 		return "employee/list";
 	}
 }
