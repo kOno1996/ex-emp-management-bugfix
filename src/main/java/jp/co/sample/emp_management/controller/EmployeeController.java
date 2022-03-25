@@ -1,6 +1,6 @@
 package jp.co.sample.emp_management.controller;
 
-import java.util.List;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +32,9 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private HttpSession session;
 	
 	/**
 	 * 使用するフォームオブジェクトをリクエストスコープに格納する.
@@ -105,9 +108,12 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping("/fuzzySearch")
-	public String fuzzySearch(SearchEmployeeForm form, String name, RedirectAttributes redirectAttributes, Model model, @PageableDefault(page = 0, size = 10)Pageable pageable) {
+	public String fuzzySearch(SearchEmployeeForm form, RedirectAttributes redirectAttributes, Model model, @PageableDefault(page = 0, size = 10)Pageable pageable) {
 		EmployeeSearch employeeSearch = new EmployeeSearch();
+		//System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + form.getName() + "\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		employeeSearch.setName(form.getName());
+		model.addAttribute("name", form.getName());
+		//session.setAttribute("employeeSearch", employeeSearch);
 		Page<Employee> employeeList = employeeService.findByLikeName(employeeSearch, pageable);
 		//System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + employeeList.getContent() + "\n\n\n\n\n\n\n\n\\n\n\n\n\n");
 		if(employeeList.getContent().size() == 0) {

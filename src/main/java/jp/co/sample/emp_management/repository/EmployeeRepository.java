@@ -58,7 +58,7 @@ public class EmployeeRepository {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count FROM employees ORDER BY hire_date ");
 		
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + pageable.getOffset() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		//System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" + pageable.getOffset() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		//何件データを取得したいのかをLIMIT句を用いて表す
 		sql.append("LIMIT " + pageable.getPageSize() + " ");
 		
@@ -109,12 +109,12 @@ public class EmployeeRepository {
 		sql.append("OFFSET " + pageable.getOffset());
 		
 		//nameに値を入れている
-		SqlParameterSource param = new MapSqlParameterSource().addValue("name", '%' + employeeSearch.getName().trim() + '%');
+		SqlParameterSource param = new MapSqlParameterSource().addValue("name", '%' + employeeSearch.getName() + '%');
 		
 		String totalSql = "SELECT COUNT(*) FROM employees WHERE name LIKE :name";
 		int total = template.queryForObject(totalSql, param, Integer.class);
 		
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n" + total + "\n\n\n\n\n\n\n\n\n\n\n\n");
+		//System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n" + total + "\n\n\n\n\n\n\n\n\n\n\n\n");
 		List<Employee> employeeList = template.query(sql.toString(), param, EMPLOYEE_ROW_MAPPER);
 		return new PageImpl<Employee>(employeeList, pageable, total);
 	}
