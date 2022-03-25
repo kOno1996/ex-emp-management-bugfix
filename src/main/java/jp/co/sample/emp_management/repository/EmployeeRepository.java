@@ -120,4 +120,12 @@ public class EmployeeRepository {
 	}
 	
 	
+	//従業員情報を追加します。
+	public void insert(Employee employee) {
+		String sql = "INSERT INTO employees(name, image, gender, hire_date, mail_address, zip_code, address, telephone, salary, characteristics, dependents_count) VALUES(:name, :image, :gender, :hireDate, :mailAddress, :zipCode, :address, :telephone, :salary, :characteristics, :dependentsCount)";
+		//プレースホルダに値を埋め込む
+		SqlParameterSource param = new BeanPropertySqlParameterSource(employee);
+		template.update(sql, param);
+	}
+	
 }
