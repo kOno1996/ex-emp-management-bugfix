@@ -1,7 +1,15 @@
 package jp.co.sample.emp_management.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jp.co.sample.emp_management.domain.Employee;
 import jp.co.sample.emp_management.domain.EmployeeSearch;
+import jp.co.sample.emp_management.form.InsertEmployeeForm;
 import jp.co.sample.emp_management.form.SearchEmployeeForm;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
 import jp.co.sample.emp_management.service.EmployeeService;
@@ -49,6 +58,11 @@ public class EmployeeController {
 	@ModelAttribute
 	public SearchEmployeeForm setUpForm2() {
 		return new SearchEmployeeForm();
+	}
+	
+	@ModelAttribute
+	public InsertEmployeeForm setUpInsertEmployeeForm() {
+		return new InsertEmployeeForm();
 	}
 	/////////////////////////////////////////////////////
 	// ユースケース：従業員一覧を表示する
@@ -124,4 +138,61 @@ public class EmployeeController {
 		model.addAttribute("employeeList", employeeList.getContent());
 		return "employee/list";
 	}
+	
+	@RequestMapping("/insert")
+	public String insert(InsertEmployeeForm insertEmployeeForm) {
+		
+		//画像の保存処理
+		saveImage(insertEmployeeForm);
+		
+		String saveImageName = insertEmployeeForm.getImage().getOriginalFilename();
+		
+		Employee employee = new Employee();
+		//formからdomainに値をコピー
+		//BeanUtils.copyProperties(insertEmployeeForm, employee);
+		employee.setName(insertEmployeeForm.getName());
+		employee.setImage(saveImageName);
+		employee.setGender(insertEmployeeForm.getGender());
+		employee.setHireDate(insertEmployeeForm.getHireDate());
+		employee.setMailAddress(insertEmployeeForm.getMailAddress());
+		employee.setZipCode(insertEmployeeForm.getZipCode());
+		employee.setAddress(insertEmployeeForm.getAddress());
+		employee.setTelephone(insertEmployeeForm.getTelephone());
+		employee.setSalary(insertEmployeeForm.getSalary());
+		employee.setCharacteristics(insertEmployeeForm.getCharacteristics());
+		employee.setDependentsCount(insertEmployeeForm.getDependentsCount());
+		
+		
+		employeeService.insert(employee);
+		return "forward:/employee/showList";
+	}
+	
+	@RequestMapping("/toInsert")
+	public String toInsert() {
+		return "employee/insert";
+	}
+	
+	//画像の名前を取得するメソッド
+	public void saveImage(InsertEmployeeForm insertEmployeeForm) {
+		String ImageName = insertEmployeeForm.getImage().getOriginalFilename();
+		String saveImageName = null;
+		saveImageName = ImageName;
+		
+		//画像保存先のパスオブジェクトを作成
+		Path imagePath = Paths.get("src/main/resources/static/img/" + saveImageName);
+		try {
+			//アップデートファイルをバイト値に変換
+			byte[] bytes = insertEmployeeForm.getImage().getBytes();
+			
+			//バイト値を書き込むためのファイルを作成して指定したパスに格納
+			OutputStream os = Files.newOutputStream(imagePath);
+			
+			//ファイルに書き込み
+			os.write(bytes);
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

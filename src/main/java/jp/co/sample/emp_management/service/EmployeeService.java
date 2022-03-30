@@ -58,4 +58,8 @@ public class EmployeeService {
 	public Page<Employee> findByLikeName(EmployeeSearch employeeSearch, Pageable pageable){
 		return employeeRepository.findByLikeName(employeeSearch, pageable);
 	}
+	
+	public void insert(Employee employee) {
+		employeeRepository.insert(employee);
+	}
 }
