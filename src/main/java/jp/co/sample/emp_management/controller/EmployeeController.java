@@ -202,4 +202,10 @@ public class EmployeeController {
 		return "forward:/employee/showList";
 	}
 	
+	@RequestMapping("/sort")
+	public String sort(String sort) {
+		System.out.println(sort);
+		return "forward:/employee/showList";
+	}
+	
 }

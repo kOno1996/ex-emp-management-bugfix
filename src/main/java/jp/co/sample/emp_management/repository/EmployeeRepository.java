@@ -141,4 +141,11 @@ public class EmployeeRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 		template.update(sql, param);
 	}
+	
+	public Page<Employee> sort(String sort, Pageable pageable){
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM employees ORDER BY ");
+		sql.append(sort + " ");
+		return template.query(sql, EMPLOYEE_ROW_MAPPER);
+	}
 }

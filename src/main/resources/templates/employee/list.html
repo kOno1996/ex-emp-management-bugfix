@@ -68,7 +68,15 @@
 		</datalist>
 		<button>検索</button>
 		</form>
-
+		
+		<form th:action="@{/employee/sort}" method="post">
+			<select name="sort">
+				<option name="sort" value="arc">昇順</option>
+				<option name="sort" value="desc">降順</option>
+			</select>
+			<button>並び替え</button>
+		</form>
+		
 		<!-- table -->
 		<div class="row">
 			<div
