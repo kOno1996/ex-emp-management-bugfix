@@ -62,4 +62,8 @@ public class EmployeeService {
 	public void insert(Employee employee) {
 		employeeRepository.insert(employee);
 	}
+	
+	public void delete(Integer id) {
+		employeeRepository.delete(id);
+	}
 }

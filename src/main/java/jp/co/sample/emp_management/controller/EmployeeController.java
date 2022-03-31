@@ -195,4 +195,11 @@ public class EmployeeController {
 		}
 	}
 	
+	//従業員を削除するメソッド
+	@RequestMapping("/delete")
+	public String delete(Integer id) {
+		employeeService.delete(id);
+		return "forward:/employee/showList";
+	}
+	
 }

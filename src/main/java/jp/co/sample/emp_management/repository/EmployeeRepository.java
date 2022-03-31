@@ -135,4 +135,10 @@ public class EmployeeRepository {
 		template.update(sql, param);
 	}
 	
+	//取得したIDに紐づく従業員を削除する
+	public void delete(Integer id) {
+		String sql = "DELETE FROM employees WHERE id=:id";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+		template.update(sql, param);
+	}
 }

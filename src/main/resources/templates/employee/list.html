@@ -155,7 +155,7 @@
 					<li th:if="${page.totalPages gt (page.number + 3)}" class="page-item">
 						<a th:if="${name}" th:href="@{''(page=${page.totalPages - 1},name=${name})}" th:text="${page.totalPages}"
 						   class="page-link"></a>
-					   <a th:unless="${name}" th:href="@{''(page=${page.totalPages - 1})}" th:text="${page.totalPages}"
+					   <a th:unless="${name}" th:href="@{/employee/showList(page=${page.totalPages - 1})}" th:text="${page.totalPages}"
 						   class="page-link"></a>
 					</li>
 
@@ -166,7 +166,7 @@
 							<span aria-hidden="true">&raquo;</span>
 							<span class="sr-only">Next</span>
 						</a>
-						<a th:unless="${name}" th:href="@{''(page=${page.number + 1})}" class="page-link"
+						<a th:unless="${name}" th:href="@{/employee/showList(page=${page.number + 1})}" class="page-link"
 						   th:tabindex="${page.last} ? -1" aria-label="Next">
 							<span aria-hidden="true">&raquo;</span>
 							<span class="sr-only">Next</span>

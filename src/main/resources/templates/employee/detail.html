@@ -173,6 +173,10 @@
 							<button type="submit" class="btn btn-primary">更新</button>
 						</fieldset>
 					</form>
+					<form th:action="@{'/employee/delete?id=' + ${employee.id}}" method="post">
+						<button class="btn btn-primary2">削除</button>
+					</form>
+					
 					
 					
 <!-- ここから下を編集する必要はありません -->

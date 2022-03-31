@@ -145,6 +145,7 @@
 									
 										<input type="text" name="zipCode" id="zipCode" class="form-control" placeholder="000-0000"
 											 th:field="*{zipCode}" th:errorclass="error-input">
+										<button id="get_address_btn" type="button">住所取得</button>
 									</div>
 								</div>
 							</div>
@@ -240,8 +241,10 @@
 		</div>
 	</div>
 	<!-- end container -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="../../static/js/bootstrap.min.js"></script>
+	<!--<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/get_address.js}"></script>
 </body>
 </html>
