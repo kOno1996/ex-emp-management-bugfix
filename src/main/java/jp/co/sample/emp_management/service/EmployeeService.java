@@ -66,4 +66,8 @@ public class EmployeeService {
 	public void delete(Integer id) {
 		employeeRepository.delete(id);
 	}
+	
+	public Page<Employee> sort(String sort, Pageable pageable) {
+		return employeeRepository.sort(sort, pageable);
+	}
 }

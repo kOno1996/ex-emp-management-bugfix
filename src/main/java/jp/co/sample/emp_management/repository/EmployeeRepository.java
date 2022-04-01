@@ -144,8 +144,13 @@ public class EmployeeRepository {
 	
 	public Page<Employee> sort(String sort, Pageable pageable){
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM employees ORDER BY ");
+		sql.append("SELECT * FROM employees ORDER BY hire_date ");
 		sql.append(sort + " ");
-		return template.query(sql, EMPLOYEE_ROW_MAPPER);
+		sql.append("LIMIT " + pageable.getPageSize() + " ");
+		sql.append("OFFSET " + pageable.getOffset());
+		List<Employee> employeeList = template.query(sql.toString(), EMPLOYEE_ROW_MAPPER);
+		String totalSql = "SELECT COUNT(*) FROM employees";
+		int total = template.queryForObject(totalSql, new MapSqlParameterSource(), Integer.class);
+		return new PageImpl<>(employeeList, pageable, total);
 	}
 }

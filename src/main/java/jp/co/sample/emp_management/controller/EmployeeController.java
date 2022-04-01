@@ -78,6 +78,9 @@ public class EmployeeController {
 		Page<Employee> employeeList = employeeService.showList(pageable);
 		model.addAttribute("page", employeeList);
 		model.addAttribute("employeeList", employeeList.getContent());
+		String link = "showList";
+		model.addAttribute("link", link);
+		model.addAttribute("list", "list");
 		return "employee/list";
 	}
 
@@ -136,6 +139,7 @@ public class EmployeeController {
 		}
 		model.addAttribute("page", employeeList);
 		model.addAttribute("employeeList", employeeList.getContent());
+		model.addAttribute("link", "fuzzy");
 		return "employee/list";
 	}
 	
@@ -203,9 +207,14 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping("/sort")
-	public String sort(String sort) {
-		System.out.println(sort);
-		return "forward:/employee/showList";
+	public String sort(String sort, @PageableDefault(page = 0, size = 10)Pageable pageable, Model model) {
+		Page<Employee> employeeListPage = employeeService.sort(sort, pageable);
+		model.addAttribute("page", employeeListPage);
+		model.addAttribute("employeeList", employeeListPage.getContent());
+		String link = "sort";
+		model.addAttribute("link", link);
+		model.addAttribute("sort", sort);
+		return "employee/list";
 	}
 	
 }
