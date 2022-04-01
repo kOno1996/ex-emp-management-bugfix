@@ -217,4 +217,29 @@ public class EmployeeController {
 		return "employee/list";
 	}
 	
+	@RequestMapping("/fuzzySort")
+	public String fuzzySort(String name, String sort, Model model, @PageableDefault(page = 0, size = 10)Pageable pageable, RedirectAttributes redirectAttributes) {
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n" + name + "\n\n\n\n\n\n\n\n\n\n\n");
+		if("".equals(name)) {
+			System.out.println("nullです");
+		}else {
+			System.out.println("nullではない");
+		}
+		if(name == null) {
+			return sort(sort, pageable, model);
+		}
+		Page<Employee> employeeList = employeeService.fuzzySort(name, sort, pageable);
+		if(employeeList.getContent().size() == 0) {
+			redirectAttributes.addFlashAttribute("noSearch", "一件もありませんでした");
+			return "redirect:/employee/showList";
+		}
+		model.addAttribute("page", employeeList);
+		model.addAttribute("employeeList", employeeList.getContent());
+		model.addAttribute("name", name);
+		model.addAttribute("sort", sort);
+		String link = "fuzzySort";
+		model.addAttribute("link", link);
+		return "employee/list";
+	}
+	
 }

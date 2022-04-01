@@ -70,4 +70,8 @@ public class EmployeeService {
 	public Page<Employee> sort(String sort, Pageable pageable) {
 		return employeeRepository.sort(sort, pageable);
 	}
+	
+	public Page<Employee> fuzzySort(String name, String sort, Pageable pageable){
+		return employeeRepository.fuzzySort(name, sort, pageable);
+	}
 }

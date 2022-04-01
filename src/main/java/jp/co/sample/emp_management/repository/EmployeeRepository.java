@@ -153,4 +153,20 @@ public class EmployeeRepository {
 		int total = template.queryForObject(totalSql, new MapSqlParameterSource(), Integer.class);
 		return new PageImpl<>(employeeList, pageable, total);
 	}
+	
+	//あいまい検索した結果でソートする
+	public Page<Employee> fuzzySort(String name, String sort, Pageable pageable){
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM employees WHERE name LIKE :name ORDER BY hire_date ");
+		sql.append(sort + " ");
+		sql.append("LIMIT " + pageable.getPageSize() + " ");
+		sql.append("OFFSET " + pageable.getOffset());
+		SqlParameterSource param = new MapSqlParameterSource().addValue("name", '%' + name + '%');
+		
+		List<Employee> employeeList = template.query(sql.toString(), param, EMPLOYEE_ROW_MAPPER);
+		
+		String totalSql = "SELECT COUNT(*) FROM employees WHERE name LIKE :name";
+		int total = template.queryForObject(totalSql, param, Integer.class);
+		return new PageImpl<>(employeeList, pageable, total);
+	}
 }
